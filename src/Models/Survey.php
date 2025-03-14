@@ -2,14 +2,20 @@
 
 namespace MattDaneshvar\Survey\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Translatable\HasTranslations;
 
-class Survey extends Model implements SurveyContract
+class Survey extends Model implements SurveyContract, HasMedia
 {
+    use HasTranslations, InteractsWithMedia;
+
     /**
      * Survey constructor.
      *
@@ -24,12 +30,21 @@ class Survey extends Model implements SurveyContract
         parent::__construct($attributes);
     }
 
+    protected $translatable = ['name', 'slug', 'description'];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name', 'slug', 'settings'];
+    protected $fillable = [
+        'name', 
+        'slug', 
+        'description', 
+        'valid_from', 
+        'valid_until', 
+        'settings'
+    ];
 
     /**
      * The attributes that should be casted.
@@ -38,7 +53,34 @@ class Survey extends Model implements SurveyContract
      */
     protected $casts = [
         'settings' => 'array',
+        'valid_from' => 'datetime',
+        'valid_until' => 'datetime',
     ];
+
+    public static function booted()
+    {
+        static::creating(function ($model) {
+            $model->slug = ['en' => static::generateUniqueSlug($model->name)];
+        });
+
+        static::updating(function ($model) {
+            $model->slug = ['en' => static::generateUniqueSlug($model->name, $model->id)];
+        });
+    }
+
+    protected static function generateUniqueSlug($name, $ignore = null)
+    {
+        $slug = \Str::slug($name);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (static::where('slug', $slug)->when(!is_null($ignore), fn ($query) => $query->where('id', '!=', $ignore))->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
+        return $slug;
+    }
 
     /**
      * The survey sections.
@@ -147,5 +189,17 @@ class Survey extends Model implements SurveyContract
         return $this->questions->mapWithKeys(function ($question) {
             return [$question->key => $question->rules];
         })->all();
+    }
+
+    /**
+     * Scope a query to only include active surveys.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+
+    public function scopeActive($query)
+    {
+        return $query->where('valid_from', '<=', Carbon::now())->where('valid_until', '>=', Carbon::now());
     }
 }
