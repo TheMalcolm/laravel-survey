@@ -29,7 +29,7 @@ class Survey extends Model implements SurveyContract
      *
      * @var array
      */
-    protected $fillable = ['name', 'settings'];
+    protected $fillable = ['name', 'slug', 'settings'];
 
     /**
      * The attributes that should be casted.
