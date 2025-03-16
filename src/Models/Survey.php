@@ -2,8 +2,10 @@
 
 namespace MattDaneshvar\Survey\Models;
 
+use App\Models\Segment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Section;
@@ -39,11 +41,13 @@ class Survey extends Model implements SurveyContract, HasMedia
      */
     protected $fillable = [
         'name', 
+        'segment_id',
         'slug', 
         'description', 
         'valid_from', 
         'valid_until', 
-        'settings'
+        'settings',
+        'points'
     ];
 
     /**
@@ -110,6 +114,17 @@ class Survey extends Model implements SurveyContract, HasMedia
     public function entries()
     {
         return $this->hasMany(get_class(app()->make(Entry::class)));
+    }
+
+    /**
+     * Get the segment associated with the survey.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+
+    public function segment(): BelongsTo
+    {
+        return $this->belongsTo(Segment::class);
     }
 
     /**
