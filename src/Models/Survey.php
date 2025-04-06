@@ -4,6 +4,7 @@ namespace MattDaneshvar\Survey\Models;
 
 use App\Models\Segment;
 use Carbon\Carbon;
+use App\Models\SlugRedirect;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MattDaneshvar\Survey\Contracts\Entry;
@@ -69,6 +70,13 @@ class Survey extends Model implements SurveyContract, HasMedia
 
         static::updating(function ($model) {
             $model->slug = ['en' => static::generateUniqueSlug($model->name, $model->id)];
+
+            if($model->getOriginal('slug')['en'] != $model->getTranslation('slug', 'en', false)) {
+                SlugRedirect::create([
+                    'from' => route('survey.show', ['slug' => $model->getOriginal('slug')['en']]),
+                    'to' => route('survey.show', ['slug' => $model->getTranslation('slug', 'en', false)])
+                ]);
+            }
         });
     }
 
