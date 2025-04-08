@@ -48,7 +48,8 @@ class Survey extends Model implements SurveyContract, HasMedia
         'valid_from', 
         'valid_until', 
         'settings',
-        'points'
+        'points',
+        'notifications_sent',
     ];
 
     /**
@@ -60,6 +61,7 @@ class Survey extends Model implements SurveyContract, HasMedia
         'settings' => 'array',
         'valid_from' => 'datetime',
         'valid_until' => 'datetime',
+        'notifications_sent' => 'boolean'
     ];
 
     public static function booted()
