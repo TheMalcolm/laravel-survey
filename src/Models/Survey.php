@@ -67,11 +67,11 @@ class Survey extends Model implements SurveyContract, HasMedia
     public static function booted()
     {
         static::creating(function ($model) {
-            $model->slug = ['en' => static::generateUniqueSlug($model->name)];
+            $model->slug = ['en' => static::generateUniqueSlug($model->getTranslation('name', 'en', false))];
         });
 
         static::updating(function ($model) {
-            $model->slug = ['en' => static::generateUniqueSlug($model->name, $model->id)];
+            $model->slug = ['en' => static::generateUniqueSlug($model->getTranslation('name', 'en', false), $model->id)];
 
             if($model->getOriginal('slug')['en'] != $model->getTranslation('slug', 'en', false)) {
                 SlugRedirect::create([
