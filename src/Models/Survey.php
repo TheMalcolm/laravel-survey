@@ -14,6 +14,7 @@ use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Survey extends Model implements SurveyContract, HasMedia
 {
@@ -226,5 +227,15 @@ class Survey extends Model implements SurveyContract, HasMedia
     public function scopeActive($query)
     {
         return $query->where('valid_from', '<=', Carbon::now())->where('valid_until', '>=', Carbon::now());
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('card')
+              ->width(800)
+              ->height(370)
+              ->sharpen(10)
+              ->optimize()
+              ->nonQueued();
     }
 }
