@@ -14,11 +14,10 @@ use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
-use App\Traits\HasCardImageConversion;
 
 class Survey extends Model implements SurveyContract, HasMedia
 {
-    use HasTranslations, InteractsWithMedia, HasCardImageConversion;
+    use HasTranslations, InteractsWithMedia;
 
     /**
      * Survey constructor.
