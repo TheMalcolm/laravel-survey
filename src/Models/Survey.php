@@ -14,6 +14,7 @@ use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Survey extends Model implements SurveyContract, HasMedia
@@ -232,10 +233,9 @@ class Survey extends Model implements SurveyContract, HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('card')
-              ->width(800)
-              ->height(370)
-              ->sharpen(10)
-              ->optimize()
-              ->nonQueued();
+            ->fit(Fit::Crop, 800, 370)
+            ->sharpen(10)
+            ->optimize()
+            ->nonQueued();
     }
 }
