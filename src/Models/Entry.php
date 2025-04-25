@@ -2,8 +2,8 @@
 
 namespace MattDaneshvar\Survey\Models;
 
+use App\Models\Partner;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User;
 use MattDaneshvar\Survey\Contracts\Answer;
 use MattDaneshvar\Survey\Contracts\Entry as EntryContract;
 use MattDaneshvar\Survey\Contracts\Survey;
@@ -76,7 +76,7 @@ class Entry extends Model implements EntryContract
      */
     public function participant()
     {
-        return $this->belongsTo(User::class, 'participant_id');
+        return $this->belongsTo(Partner::class, 'participant_id');
     }
 
     /**
