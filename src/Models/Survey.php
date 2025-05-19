@@ -234,14 +234,24 @@ class Survey extends Model implements SurveyContract, HasMedia
     {
         $this->addMediaConversion('card')
             ->fit(Fit::Crop, 419, 194)
-            ->withResponsiveImages()
+            ->sharpen(10)
+            ->optimize()
+            ->nonQueued();
+
+        $this->addMediaConversion('card@2x')
+            ->fit(Fit::Crop, 838, 388)
             ->sharpen(10)
             ->optimize()
             ->nonQueued();
 
         $this->addMediaConversion('cover')
             ->fit(Fit::Crop, 1520, 500)
-            ->withResponsiveImages()
+            ->sharpen(10)
+            ->optimize()
+            ->nonQueued();
+
+        $this->addMediaConversion('cover@2x')
+            ->fit(Fit::Crop, 3040, 1000)
             ->sharpen(10)
             ->optimize()
             ->nonQueued();
